@@ -58,16 +58,23 @@ def get_pdf(pdf_id):
                 "img_index": img_index,
                 "text": image_text
             })
+    total_pages = pdf_document.page_count
 
-    pdf_json = {
+    filename = upload.filename
+    total_pages = total_pages 
+        metadata = [{"page_num":image_texts[page_num], "data":[pdf_content[page_num]]}]
+        # "image_texts": image_texts,
+        # "content": pdf_content,
+
+    for data in pdf_json (0, total_pages):
+        pdf_json = {
         "filename": upload.filename,
-        "total_pages": pdf_document.page_count, 
+        "total_pages": total_pages, 
         "metadata" : [{"page_num":image_texts[page_num], "data":[pdf_content[page_num]]}]
         # "image_texts": image_texts,
         # "content": pdf_content,
 
     }
-
     return jsonify(pdf_json)
 
 if __name__ == '__main__':
