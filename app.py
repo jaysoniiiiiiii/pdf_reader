@@ -38,10 +38,22 @@ def get_pdf(pdf_id):
 
     pdf_content = []
     image_texts = []
+
+    pdf_json = {
+        "filename": upload.filename,
+        "total_pages": pdf_document.page_count, 
+        # "image_texts": image_texts,
+        # "content": pdf_content,
+        # "metadata" : [{"page_num":image_texts[page_num], "data":[pdf_content[page_num]]}]
+        "metadata" : []
+    }
+
+
     for page_num in range(pdf_document.page_count):
         page = pdf_document.load_page(page_num)
-        pdf_content.append(page.get_text("text"))
-
+        page_text = page.get_text("text")
+        
+        image_text = ""
         image_list = page.get_images(full=True)
         for img_index, img in enumerate(image_list):
             xref = img[0]
@@ -52,29 +64,16 @@ def get_pdf(pdf_id):
             image = Image.open(BytesIO(image_bytes))
 
             # Use pytesseract to extract text from image
-            image_text = pytesseract.image_to_string(image)
-            image_texts.append({
-                "page": page_num,
-                "img_index": img_index,
-                "text": image_text
-            })
-    total_pages = pdf_document.page_count
+            image_text += pytesseract.image_to_string(image) + " "
 
-    filename = upload.filename
-    total_pages = total_pages 
-        metadata = [{"page_num":image_texts[page_num], "data":[pdf_content[page_num]]}]
-        # "image_texts": image_texts,
-        # "content": pdf_content,
+        metadata = {
+            "page_num": page_num + 1,
+            "text": page_text,
+            "image_text": image_text.strip()
+        }
 
-    for data in pdf_json (0, total_pages):
-        pdf_json = {
-        "filename": upload.filename,
-        "total_pages": total_pages, 
-        "metadata" : [{"page_num":image_texts[page_num], "data":[pdf_content[page_num]]}]
-        # "image_texts": image_texts,
-        # "content": pdf_content,
+        pdf_json["metadata"].append(metadata)
 
-    }
     return jsonify(pdf_json)
 
 if __name__ == '__main__':
